@@ -5,7 +5,6 @@ import 'package:movies_app/widgets/casting_cards.dart';
 class DetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print(ModalRoute.of(context)!.settings.arguments);
     final Movie movie = ModalRoute.of(context)!.settings.arguments as Movie;
 
     return Scaffold(
@@ -20,7 +19,9 @@ class DetailsScreen extends StatelessWidget {
             _Overview(
               movie: movie,
             ),
-            CastingCards()
+            CastingCards(
+              movieId: movie.id,
+            )
           ])),
         ],
       ),
@@ -75,13 +76,15 @@ class _PosterAndTitle extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: FadeInImage(
-                placeholder: AssetImage('assets/images/no-image.jpg'),
-                image: NetworkImage(movie.fullPoster),
-                height: 150,
-                width: 100,
+            Hero(
+              tag: movie.heroId!,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: FadeInImage(
+                  placeholder: AssetImage('assets/images/no-image.jpg'),
+                  image: NetworkImage(movie.fullPoster),
+                  height: 150,
+                ),
               ),
             ),
             SizedBox(width: 20),

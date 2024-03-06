@@ -16,6 +16,8 @@ class Movie {
   double voteAverage;
   int voteCount;
 
+  String? heroId;
+
   get fullBackdrop {
     return (this.backdropPath != null)
         ? 'https://image.tmdb.org/t/p/w500${this.backdropPath}'

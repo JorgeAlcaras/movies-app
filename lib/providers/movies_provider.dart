@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:movies_app/models/models.dart';
-import 'package:movies_app/models/top_rate.dart';
 
 class MoviesProvider extends ChangeNotifier {
   final String _apiKey = '22c2bd815ccb64ce3211dea8c612faaa';
@@ -12,11 +11,12 @@ class MoviesProvider extends ChangeNotifier {
   List<Movie> popularMovies = [];
   List<Movie> topMovies = [];
 
+  Map<int, List<Cast>> moviesCast = {};
+
   int popularPage = 0;
   int topPage = 0;
 
   MoviesProvider() {
-    print('MovieProvider: constructor');
     getOnDisplayMovies();
     getPopularMovies();
     getTopRateMovies();
@@ -57,5 +57,28 @@ class MoviesProvider extends ChangeNotifier {
     topMovies = topResponse.results;
 
     notifyListeners();
+  }
+
+  Future<List<Cast>> getMovieCast(int movieId) async {
+    if (moviesCast.containsKey(movieId)) {
+      return moviesCast[movieId]!;
+    }
+
+    final jsonData = await _getJsonData('3/movie/$movieId/credits');
+    final creditsResponse = Credits.fromJson(jsonData);
+
+    moviesCast[movieId] = creditsResponse.cast;
+
+    return creditsResponse.cast;
+  }
+
+  Future<List<Movie>> searchMovie(String query) async {
+    final url = Uri.http(_baseUrl, '3/search/movie',
+        {'api_key': _apiKey, 'language': _language, 'query': query});
+
+    final response = await http.get(url);
+    final searchResponse = SearchMovies.fromJson(response.body);
+
+    return searchResponse.results;
   }
 }
